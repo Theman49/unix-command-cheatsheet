@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unix File & User Management Cheat Sheet</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #24292e;
+      --border: #e1e4e8;
+      --header-bg: #f6f8fa;
+      --code-bg: #f6f8fa;
+      --code-text: #24292e;
+      --hover: #f6f8fa;
+      --scrollbar: #c1c1c1;
+      --link: #0366d6;
+    }
+    [data-theme="dark"] {
+      --bg: #0d1117;
+      --text: #c9d1d9;
+      --border: #30363d;
+      --header-bg: #161b22;
+      --code-bg: #161b22;
+      --code-text: #c9d1d9;
+      --hover: #21262d;
+      --scrollbar: #484f58;
+      --link: #58a6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      margin: 0;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+    main { max-width: 900px; margin: 0 auto; padding-top: 60px; }
+    h1 { border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    h2 { margin-top: 40px; color: var(--text); }
+    h3 { margin-top: 30px; color: var(--text); }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th, td { border: 1px solid var(--border); padding: 10px 15px; text-align: left; }
+    th { background: var(--header-bg); font-weight: 600; }
+    tr:nth-child(even) { background: var(--hover); }
+    tr:hover { background: var(--border); }
+    code { background: var(--code-bg); color: var(--code-text); padding: 2px 6px; border-radius: 4px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 0.9em; }
+    pre { background: var(--code-bg); padding: 15px; border-radius: 6px; overflow-x: auto; }
+    pre code { background: none; padding: 0; }
+    ul { padding-left: 25px; }
+    li { margin: 8px 0; }
+    #theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--header-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 1.2em;
+      transition: all 0.3s;
+      z-index: 100;
+    }
+    #theme-toggle:hover { background: var(--hover); transform: scale(1.05); }
+    @media (max-width: 600px) {
+      table { display: block; overflow-x: auto; }
+      body { padding: 15px 10px; }
+      main { padding-top: 70px; }
+    }
+    ::-webkit-scrollbar { height: 8px; width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+  <main>
+    <h1>Unix File & User Management Cheat Sheet</h1>
+    
+    <h2>Navigation & Basic File Operations</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>pwd</code></td><td>Print working directory</td></tr>
+        <tr><td><code>ls</code></td><td>List files</td></tr>
+        <tr><td><code>ls -la</code></td><td>List files with details (including hidden)</td></tr>
+        <tr><td><code>cd &lt;dir&gt;</code></td><td>Change directory</td></tr>
+        <tr><td><code>cd ..</code></td><td>Go up one directory</td></tr>
+        <tr><td><code>cd ~</code></td><td>Go to home directory</td></tr>
+        <tr><td><code>cd -</code></td><td>Go to previous directory</td></tr>
+        <tr><td><code>mkdir &lt;name&gt;</code></td><td>Create directory</td></tr>
+        <tr><td><code>mkdir -p path/a/b/c</code></td><td>Create nested directories</td></tr>
+        <tr><td><code>touch &lt;file&gt;</code></td><td>Create empty file</td></tr>
+        <tr><td><code>cp &lt;src&gt; &lt;dest&gt;</code></td><td>Copy file</td></tr>
+        <tr><td><code>cp -r &lt;src&gt; &lt;dest&gt;</code></td><td>Copy directory recursively</td></tr>
+        <tr><td><code>mv &lt;src&gt; &lt;dest&gt;</code></td><td>Move/rename file or directory</td></tr>
+        <tr><td><code>rm &lt;file&gt;</code></td><td>Remove file</td></tr>
+        <tr><td><code>rm -r &lt;dir&gt;</code></td><td>Remove directory recursively</td></tr>
+        <tr><td><code>rm -rf &lt;dir&gt;</code></td><td>Force remove (use with caution!)</td></tr>
+      </tbody>
+    </table>
+    
+    <h2>Viewing & Editing Files</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>cat &lt;file&gt;</code></td><td>Display file contents</td></tr>
+        <tr><td><code>less &lt;file&gt;</code></td><td>View file page by page</td></tr>
+        <tr><td><code>head &lt;file&gt;</code></td><td>Show first 10 lines</td></tr>
+        <tr><td><code>head -n 20 &lt;file&gt;</code></td><td>Show first 20 lines</td></tr>
+        <tr><td><code>tail &lt;file&gt;</code></td><td>Show last 10 lines</td></tr>
+        <tr><td><code>tail -f &lt;file&gt;</code></td><td>Follow file changes (logs)</td></tr>
+        <tr><td><code>nano &lt;file&gt;</code></td><td>Edit with nano</td></tr>
+        <tr><td><code>vim &lt;file&gt;</code></td><td>Edit with vim</td></tr>
+        <tr><td><code>wc &lt;file&gt;</code></td><td>Count lines, words, bytes</td></tr>
+      </tbody>
+    </table>
+    
+    <h2>File Permissions</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>chmod 755 &lt;file&gt;</code></td><td>Set permissions (rwxr-xr-x)</td></tr>
+        <tr><td><code>chmod +x &lt;file&gt;</code></td><td>Add execute permission</td></tr>
+        <tr><td><code>chmod -x &lt;file&gt;</code></td><td>Remove execute permission</td></tr>
+        <tr><td><code>chmod -R 644 dir/</code></td><td>Set files to rw-r--r--</td></tr>
+        <tr><td><code>chmod -R 755 dir/</code></td><td>Set files to rwxr-xr-x</td></tr>
+        <tr><td><code>chown user:group &lt;file&gt;</code></td><td>Change owner</td></tr>
+        <tr><td><code>chown -R user:group &lt;dir&gt;</code></td><td>Change owner recursively</td></tr>
+        <tr><td><code>chgrp &lt;group&gt; &lt;file&gt;</code></td><td>Change group</td></tr>
+      </tbody>
+    </table>
+    
+    <h3>Permission Codes</h3>
+    <pre><code>r = 4, w = 2, x = 1
+7 = rwx, 6 = rw-, 5 = r-x, 4 = r--, 0 = ---</code></pre>
+    
+    <h2>User Management</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>whoami</code></td><td>Current user</td></tr>
+        <tr><td><code>who</code></td><td>Logged in users</td></tr>
+        <tr><td><code>w</code></td><td>Who's logged in + what they're doing</td></tr>
+        <tr><td><code>su - &lt;user&gt;</code></td><td>Switch to user (login shell)</td></tr>
+        <tr><td><code>sudo &lt;cmd&gt;</code></td><td>Run as superuser</td></tr>
+        <tr><td><code>exit</code></td><td>Exit current user/shell</td></tr>
+      </tbody>
+    </table>
+    
+    <h3>Creating & Deleting Users</h3>
+    <pre><code># Add user
+sudo useradd -m &lt;username&gt;        # Create with home dir
+sudo useradd -m -s /bin/bash &lt;username&gt;  # With bash shell
+
+# Delete user
+sudo userdel &lt;username&gt;            # Remove user
+sudo userdel -r &lt;username&gt;         # Remove user + home dir
+
+# Modify user
+sudo usermod -l &lt;newname&gt; &lt;oldname&gt;      # Rename user
+sudo usermod -aG &lt;group&gt; &lt;user&gt;          # Add to group</code></pre>
+    
+    <h2>Group Management</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>groups &lt;user&gt;</code></td><td>Show user's groups</td></tr>
+        <tr><td><code>groupadd &lt;name&gt;</code></td><td>Create group</td></tr>
+        <tr><td><code>groupdel &lt;name&gt;</code></td><td>Delete group</td></tr>
+        <tr><td><code>groupmod -n &lt;new&gt; &lt;old&gt;</code></td><td>Rename group</td></tr>
+      </tbody>
+    </table>
+    
+    <h2>User & Group Info Files</h2>
+    <table>
+      <thead><tr><th>File</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>/etc/passwd</code></td><td>User accounts</td></tr>
+        <tr><td><code>/etc/shadow</code></td><td>Encrypted passwords</td></tr>
+        <tr><td><code>/etc/group</code></td><td>Group definitions</td></tr>
+        <tr><td><code>/etc/sudoers</code></td><td>Sudo permissions</td></tr>
+      </tbody>
+    </table>
+    
+    <h2>File Search</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>find &lt;path&gt; -name "*.txt"</code></td><td>Find files by name</td></tr>
+        <tr><td><code>find &lt;path&gt; -type d</code></td><td>Find directories</td></tr>
+        <tr><td><code>find &lt;path&gt; -user &lt;name&gt;</code></td><td>Find by owner</td></tr>
+        <tr><td><code>find &lt;path&gt; -size +100M</code></td><td>Find files > 100MB</td></tr>
+        <tr><td><code>locate &lt;file&gt;</code></td><td>Quick search (needs updatedb)</td></tr>
+        <tr><td><code>which &lt;cmd&gt;</code></td><td>Find command location</td></tr>
+        <tr><td><code>whereis &lt;cmd&gt;</code></td><td>Find binary, source, man page</td></tr>
+      </tbody>
+    </table>
+    
+    <h2>Disk & File Info</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>df -h</code></td><td>Disk space usage (human readable)</td></tr>
+        <tr><td><code>du -sh &lt;dir&gt;</code></td><td>Directory size</td></tr>
+        <tr><td><code>du -sh *</code></td><td>Size of each item in current dir</td></tr>
+        <tr><td><code>ls -lh &lt;file&gt;</code></td><td>File size in human format</td></tr>
+        <tr><td><code>stat &lt;file&gt;</code></td><td>Detailed file info</td></tr>
+        <tr><td><code>file &lt;file&gt;</code></td><td>Determine file type</td></tr>
+      </tbody>
+    </table>
+    
+    <h2>Links</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>ln &lt;target&gt; &lt;link&gt;</code></td><td>Create hard link</td></tr>
+        <tr><td><code>ln -s &lt;target&gt; &lt;link&gt;</code></td><td>Create symbolic (soft) link</td></tr>
+        <tr><td><code>readlink &lt;link&gt;</code></td><td>Show link target</td></tr>
+        <tr><td><code>ls -la</code></td><td>Links shown with <code>@</code> or <code>-></code></td></tr>
+      </tbody>
+    </table>
+    
+    <h2>Process Management</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>ps aux</code></td><td>All running processes</td></tr>
+        <tr><td><code>top</code></td><td>Interactive process viewer</td></tr>
+        <tr><td><code>htop</code></td><td>Enhanced process viewer</td></tr>
+        <tr><td><code>kill &lt;pid&gt;</code></td><td>Kill process by ID</td></tr>
+        <tr><td><code>kill -9 &lt;pid&gt;</code></td><td>Force kill</td></tr>
+        <tr><td><code>pkill &lt;name&gt;</code></td><td>Kill by name</td></tr>
+        <tr><td><code>killall &lt;name&gt;</code></td><td>Kill all processes by name</td></tr>
+      </tbody>
+    </table>
+    
+    <h2>Archives & Compression</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>tar -cvf archive.tar dir/</code></td><td>Create tar</td></tr>
+        <tr><td><code>tar -xvf archive.tar</code></td><td>Extract tar</td></tr>
+        <tr><td><code>tar -czvf archive.tar.gz dir/</code></td><td>Create tar.gz</td></tr>
+        <tr><td><code>tar -xzvf archive.tar.gz</code></td><td>Extract tar.gz</td></tr>
+        <tr><td><code>zip -r archive.zip dir/</code></td><td>Create zip</td></tr>
+        <tr><td><code>unzip archive.zip</code></td><td>Extract zip</td></tr>
+      </tbody>
+    </table>
+    
+    <h2>Pipes & Redirection</h2>
+    <table>
+      <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>cmd > file</code></td><td>Redirect output to file (overwrite)</td></tr>
+        <tr><td><code>cmd >> file</code></td><td>Append output to file</td></tr>
+        <tr><td><code>cmd 2> file</code></td><td>Redirect stderr</td></tr>
+        <tr><td><code>cmd &> file</code></td><td>Redirect both stdout & stderr</td></tr>
+        <tr><td><code>cmd1 | cmd2</code></td><td>Pipe output to another command</td></tr>
+        <tr><td><code>cmd < file</code></td><td>Use file as input</td></tr>
+      </tbody>
+    </table>
+    
+    <h2>Useful Tips</h2>
+    <ul>
+      <li>Tab completion: Press <code>Tab</code> to auto-complete commands/paths</li>
+      <li>History: <code>history</code> shows past commands, <code>Ctrl+R</code> searches</li>
+      <li>Cancel command: <code>Ctrl+C</code></li>
+      <li>Suspend to background: <code>Ctrl+Z</code>, then <code>bg</code> to continue</li>
+      <li>Clear terminal: <code>Ctrl+L</code> or <code>clear</code></li>
+      <li>Emergency exit: <code>Ctrl+\</code></li>
+    </ul>
+  </main>
+  <script>
+    const toggle = document.getElementById('theme-toggle');
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initial = saved || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', initial);
+    updateIcon(initial);
+    
+    toggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateIcon(next);
+    });
+    
+    function updateIcon(theme) {
+      toggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+  </script>
+</body>
+</html>
